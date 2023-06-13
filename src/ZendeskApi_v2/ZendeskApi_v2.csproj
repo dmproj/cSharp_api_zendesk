@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--Nuget-->
+  <PropertyGroup>
+    <PackageId>ZendeskApi_v2</PackageId>
+    <Title>ZendeskApi_v2</Title>
+    <Authors>Elizabeth Schneider</Authors>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Copyright>Copyright (c) Elizabeth Schneider 2012-$([System.DateTime]::Now.ToString(yyyy))</Copyright>
+    <PackageTags>zendesk api</PackageTags>
+    <description>A full c# wrapper for Zendesk's api v2.</description>
+    <PackageProjectUrl>https://github.com/Speedygeek/ZendeskApi_v2/</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageIcon>lotus.png</PackageIcon>
+    <PackageReleaseNotes>https://github.com/Speedygeek/ZendeskApi_v2/releases</PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Speedygeek/ZendeskApi_v2.git</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <OutputType>Library</OutputType>
+    <LangVersion>latest</LangVersion>
+    <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TargetFrameworks>netstandard2.1;net462;net6.0</TargetFrameworks>
+    <NoWarn>1701;1702;NU5105;NU1605;NU1701;SYSLIB0014;$(NoWarn)</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net462'">
+    <DefineConstants>$(DefineConstants);ASYNC;SYNC</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.1'">
+    <DefineConstants>$(DefineConstants);ASYNC;SYNC</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net6.0'">
+    <DefineConstants>$(DefineConstants);ASYNC;SYNC</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GitVersion.MsBuild" Version="5.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\tools\icon\lotus.png" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+  
+  
+  <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+  <Target Name="Update Version" AfterTargets="GetVersion" Condition="'$(TF_BUILD)' == 'true' And '$(TargetFramework)'=='netstandard2.1'">
+    <Message Text="Version = $(GITVERSION_FullSemVer)" Importance="High" />
+    <Message Text="##vso[build.updatebuildnumber]$(GITVERSION_FullSemVer)" Importance="High" />
+  </Target>
+</Project>
